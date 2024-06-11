@@ -1,20 +1,43 @@
+const CopyPlugin = require('copy-webpack-plugin');
+const HtmlPlugin = require('html-webpack-plugin');
+const path = require('path');
+
 module.exports = {
-  mode: "development",
-  entry: "./src/index.tsx",
+  mode: 'development',
+  devtool: 'cheap-module-source-map',
+  entry: {
+    popup: path.resolve('./src/popup/popup.tsx'),
+  },
   module: {
     rules: [
       {
-        use: "ts-loader",
+        use: 'ts-loader',
         test: /\.tsx$/,
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: ['.tsx', '.ts', '.js'],
   },
 
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('./src/manifest.json'),
+          to: path.resolve('./dist'),
+        },
+      ],
+    }),
+    new HtmlPlugin({
+      title: 'QuickQuery | Home',
+      filename: 'popup.html',
+      chunks: ['popup'],
+    }),
+  ],
+
   output: {
-    filename: "index.js",
+    filename: '[name].js',
   },
 };
